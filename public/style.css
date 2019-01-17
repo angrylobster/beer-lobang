@@ -1,0 +1,13 @@
+#map {
+    position:absolute;
+    margin-top: 50px;
+    height: calc(100% - 50px);
+    /* The height is 400 pixels */
+    width: 100%;
+}
+
+#search-input{
+    margin-top: 1em;
+    font-size: 1.5em;
+    padding: 0.5em;
+}

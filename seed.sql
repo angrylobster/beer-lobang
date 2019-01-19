@@ -4,5 +4,3 @@ CREATE TABLE users (
     username TEXT,
     password TEXT   
 );
-INSERT INTO users (username, password) VALUES ('admin', 'admin');
-INSERT INTO users (username, password) VALUES ('testuser', 'password');

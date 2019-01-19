@@ -1,5 +1,5 @@
-const API_KEY = 'AIzaSyC-tEAh56qJBnYr7WTsvWyPqa1G9lRPpCc';
-const SINGAPORE = {
+var API_KEY = 'AIzaSyC-tEAh56qJBnYr7WTsvWyPqa1G9lRPpCc';
+var SINGAPORE = {
     zoom: 13,
     center: {
         lat: 1.3,
@@ -23,7 +23,28 @@ function initMap() {
 
     // When places are found, manipulate the markers for each place.
     var markers = [];
-    searchBox.addListener('places_changed', function () {
+
+    var service = new google.maps.places.PlacesService(map);
+
+    savedLocations ? 
+    savedLocations.forEach(location => {
+        service.getDetails({
+            placeId: location.place_id
+        }, function (result, status) {
+            if (status != google.maps.places.PlacesServiceStatus.OK) {
+                alert(status);
+                return;
+            }
+            var marker = new google.maps.Marker({
+                map: map,
+                position: result.geometry.location
+            });
+            var infoWindow = getInfoWindow(result);
+            marker.addListener('click', () => { infoWindow.open(map, marker) });
+        });
+    }) : null;
+
+    searchBox.addListener('places_changed', () => {
         var places = searchBox.getPlaces();
 
         if (places.length == 0) {
@@ -31,14 +52,14 @@ function initMap() {
         }
 
         // Clear out the old markers.
-        markers.forEach(function (marker) {
+        markers.forEach(marker => {
             marker.setMap(null);
         });
         markers = [];
 
         // For each place, set the icon, marker and location.
         var bounds = new google.maps.LatLngBounds();
-        places.forEach(function (place) {
+        places.forEach(place => {
             if (!place.geometry) {
                 console.log("Returned place contains no geometry");
                 return;
@@ -62,18 +83,17 @@ function initMap() {
             });
 
             // Add click listener for each marker, and attach the infoWindow object to it.
-            marker.addListener(marker, 'click', () => {
-                // alert('hi!');
-                
+            marker.addListener('click', () => {
+                google.maps.event.addListener(infoWindow, 'domready', () => {
+                    document.body.querySelector(`#${place.place_id}`).addEventListener('click', saveLocation);
+                })
+                infoWindow.open(map, marker);
             })
 
-            markers.push(marker);
-
             // Create a custom infoWindow object here. Use the 'content' key to determine <html> data.
-            var infoWindow = new google.maps.InfoWindow({
-                
-                content: ''
-            });
+            var infoWindow = getInfoWindow(place);
+
+            markers.push(marker);
 
             if (place.geometry.viewport) {
                 // Only geocodes have viewport.
@@ -84,4 +104,43 @@ function initMap() {
         });
         map.fitBounds(bounds);
     });
+}
+
+function getInfoWindow(place){
+    return new google.maps.InfoWindow({
+        content: getContent(place)
+    });
+}
+
+function getContent(place) {
+    let photoURL;
+    let photoSettings = {
+        'maxWidth': 200,
+        'maxHeight': 120
+    }
+    place.photos[0].getUrl() ? photoURL = place.photos[0].getUrl(photoSettings) : photoURL = "";
+
+    return `
+    <div style="width:200px; text-align:center;">
+        <img src=${photoURL}></img>
+        <h5>${place.name}</h5>
+        <p>${place.formatted_address}</p>
+        <button id=${place.place_id}>Save</button>
+    </div>
+    `
+}
+
+function saveLocation() {
+    fetch('/locations/add', {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        headers: {
+            "Content-Type": "application/json",
+            "X-Custom-Header": "ProcessImmediately"
+        },
+        body: JSON.stringify({
+            place_id: this.id
+        })
+    })
 }

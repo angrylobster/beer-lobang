@@ -7,15 +7,21 @@ module.exports = (db) => {
      */
 
     let getAllUsers = (request, response) => {
-        response.send('all users displayed', {loggedIn: request.cookies['loggedIn']});
+        response.send('all users displayed', {cookies: request.cookies});
     }
 
     let getMap = (request, response) => {
-        response.render('../views/map', {loggedIn: request.cookies['loggedIn']});
+        db.users.getMap(request, (err, result) => {
+            if (result === null){
+                response.render('../views/map');
+            } else {
+                response.render('../views/map', {cookies: request.cookies, savedLocations: result});
+            }
+        })
     }
 
     let homepage = (request, response) => {
-        response.render('../views/default', request.cookies);
+        response.render('../views/default', {cookies: request.cookies});
     }
 
     let register = (request, response) => {
@@ -24,28 +30,28 @@ module.exports = (db) => {
             response.redirect('/');
         }
         db.users.register(request, (err, result) => {
-            console.log(result);
             response.cookie('loggedIn', true);
             response.cookie('username', result[0]['username']);
-            // response.cookies('username', result.)
-            response.render('../views/map');
+            response.cookie('user_id', result[0]['id']);
+            response.redirect('/');
         })
     }
 
     let login = (request, response) => {
         db.users.login(request, (err, result) => {
-            response.cookie('loggedIn', true);
-            response.cookie('username', result[0]['username']);
-            response.render('../views/map');
+            if (result) {
+                response.cookie('loggedIn', true);
+                response.cookie('username', result[0]['username']);
+                response.cookie('user_id', result[0]['id']);
+                response.redirect('/');
+            } else {
+                
+                response.redirect('back')
+            }
         })
 
     }
 
-    // let allTweeds = (request, response) => {
-    //     db.users.getAllTweeds((error, tweeds) => {
-    //         response.send('user/allTweeds', {tweeds})
-    //     })
-    // }
     /**
      * ===========================================
      * Export controller functions as a module

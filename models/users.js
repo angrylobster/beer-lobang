@@ -11,8 +11,8 @@ module.exports = (dbPoolInstance) => {
     }
 
     let login = (request, callback) => {
-        let query = `SELECT * FROM users WHERE (username=$1 AND password=$2)`;
-        let values = [request.body['login-username'], sha256(request.body['login-password'])];
+        const query = `SELECT * FROM users WHERE (username=$1 AND password=$2)`;
+        const values = [request.body['login-username'], sha256(request.body['login-password'])];
         dbPoolInstance.query(query, values, (err, result) => {
             if (err){
                 console.error('query error: ' + err.stack);
@@ -26,10 +26,22 @@ module.exports = (dbPoolInstance) => {
         })
     }
 
+    let getMap = (request, callback) => {
+        if (request.cookies['loggedIn']){
+            const query = `SELECT * FROM locations WHERE (user_id=${request.cookies['user_id']})`;
+            dbPoolInstance.query(query, (err, result) => {
+                callback(null, result.rows);
+            })
+        } else {
+            callback(null,null);
+        }
+
+    }
 
     return{
         register,
-        login
+        login,
+        getMap
     };
 };
 

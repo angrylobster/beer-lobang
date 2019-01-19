@@ -1,5 +1,6 @@
 const pg = require('pg');
 const users = require('./models/users');
+const locations = require('./models/locations');
 const url = require('url');
 
 const configs = {
@@ -23,6 +24,7 @@ module.exports = {
 
     // for the model
     users: users(pool),
+    locations: locations(pool),
 
     //make queries directly from here
     queryInterface: (text, params, callback) => {

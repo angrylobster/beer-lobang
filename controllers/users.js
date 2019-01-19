@@ -21,7 +21,7 @@ module.exports = (db) => {
     }
 
     let homepage = (request, response) => {
-        response.render('../views/default', {cookies: request.cookies});
+        response.render('../views/default', {loggedIn: request.cookies['loggedIn']});
     }
 
     let register = (request, response) => {
@@ -33,7 +33,7 @@ module.exports = (db) => {
             response.cookie('loggedIn', true);
             response.cookie('username', result[0]['username']);
             response.cookie('user_id', result[0]['id']);
-            response.redirect('/');
+            response.redirect('back');
         })
     }
 
@@ -43,9 +43,8 @@ module.exports = (db) => {
                 response.cookie('loggedIn', true);
                 response.cookie('username', result[0]['username']);
                 response.cookie('user_id', result[0]['id']);
-                response.redirect('/');
+                response.redirect('back');
             } else {
-                
                 response.redirect('back')
             }
         })

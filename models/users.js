@@ -2,7 +2,7 @@ const cookieParser = require('cookie-parser');
 const sha256 = require('js-sha256');
 module.exports = (dbPoolInstance) => {
 
-    let register = (request, callback) => {
+    let createNewUser = (request, callback) => {
         const query = 'INSERT INTO users (username, password) VALUES ($1,$2) RETURNING *';
         const values = [request.body['register-username'], sha256(request.body['register-password'])];
         dbPoolInstance.query(query, values, (err, result) => {
@@ -10,7 +10,7 @@ module.exports = (dbPoolInstance) => {
         });
     }
 
-    let login = (request, callback) => {
+    let checkUserLoginPassword = (request, callback) => {
         const query = `SELECT * FROM users WHERE (username=$1 AND password=$2)`;
         const values = [request.body['login-username'], sha256(request.body['login-password'])];
         dbPoolInstance.query(query, values, (err, result) => {
@@ -26,22 +26,9 @@ module.exports = (dbPoolInstance) => {
         })
     }
 
-    let getMap = (request, callback) => {
-        if (request.cookies['loggedIn']){
-            const query = `SELECT * FROM locations WHERE (user_id=${request.cookies['user_id']})`;
-            dbPoolInstance.query(query, (err, result) => {
-                callback(null, result.rows);
-            })
-        } else {
-            callback(null,null);
-        }
-
-    }
-
     return{
-        register,
-        login,
-        getMap
+        createNewUser,
+        checkUserLoginPassword,
     };
 };
 

@@ -12,8 +12,8 @@ module.exports = (dbPoolInstance) => {
             });
         }
     }
-    
-    let getUsersLocations =  (request, callback) => {
+
+    let getUsersLocations = (request, callback) => {
         const query = 'SELECT * FROM locations WHERE (user_id=$1)';
         const values = [parseInt(request.params.id)];
         dbPoolInstance.query(query, values, (err, result) => {
@@ -29,10 +29,45 @@ module.exports = (dbPoolInstance) => {
         })
     }
 
-    return{
+    let getLocationsByUser = (request, callback) => {
+        if (request.cookies['loggedIn']) {
+            const query = `SELECT * FROM locations WHERE (user_id=${request.cookies['user_id']})`;
+            dbPoolInstance.query(query, (err, result) => {
+                if (err) {
+                    console.error('query error:' + err.stack);
+                    callback(err, null);
+                }
+                if (result.rows) {
+                    callback(null, result.rows);
+                } else {
+                    callback(null, null);
+                }
+            })
+        } else {
+            callback(null, null);
+        }
+    }
+
+    let getAllLocations = (request, callback) => {
+        const query = `SELECT DISTINCT * FROM locations`;
+        dbPoolInstance.query(query, (err, result) => {
+            if (err) {
+                console.error('query error: ' + err.stack);
+                callback(err, null);
+            }
+            if (result.rows) {
+                callback(null, result.rows);
+            } else {
+                callback(null, null);
+            }
+        })
+    }
+
+    return {
         add,
         getUsersLocations,
+        getLocationsByUser,
+        getAllLocations,
         deleteLocation
     };
 };
-

@@ -12,6 +12,27 @@ module.exports = (db) => {
         })
     }
 
+    let renderMap = (request, response) => {
+        db.locations.getLocationsByUser(request, (err, result) => {
+            console.log(result)
+            if (result === null){
+                response.render('../views/map');
+            } else {
+                response.render('../views/map', {
+                    cookies: request.cookies, 
+                    savedLocations: result
+                });
+            }
+        })
+    }
+
+    let renderHomepage = (request, response) => {
+        db.locations.getLocationsByUser(request, (err, result) => {
+            
+            response.render('../views/home', {cookies: request.cookies})
+        })
+    }
+
     let getUsersLocations = (request, response) => {
         db.locations.getUsersLocations(request, (err, result) => {
             response.send(result);
@@ -34,6 +55,8 @@ module.exports = (db) => {
     return {
         add,
         getUsersLocations,
-        deleteLocation
+        deleteLocation,
+        renderHomepage,
+        renderMap
     };
 }

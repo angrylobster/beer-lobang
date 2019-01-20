@@ -13,5 +13,6 @@ module.exports = (app, db) => {
     app.get('/locations/:id', locations.getUsersLocations);
     app.post('/users/login', users.login);
     app.post('/users/register', users.register);
-    app.post('/locations/add', locations.add);
+    app.post('/locations/add/:id', locations.add);
+    app.delete('/locations/delete/:userid/:locationid', locations.deleteLocation);
 };

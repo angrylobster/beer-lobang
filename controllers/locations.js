@@ -18,6 +18,13 @@ module.exports = (db) => {
         })
     }
 
+    let deleteLocation = (request, response) => {
+        console.log(request.params)
+        db.locations.deleteLocation(request, (err, result) => {
+            response.redirect('back');
+        })
+    }
+
     /*
      * ===========================================
      * Export controller functions as a module
@@ -26,6 +33,7 @@ module.exports = (db) => {
 
     return {
         add,
-        getUsersLocations
+        getUsersLocations,
+        deleteLocation
     };
 }

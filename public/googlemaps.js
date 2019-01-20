@@ -27,22 +27,26 @@ function initMap() {
     var service = new google.maps.places.PlacesService(map);
 
     savedLocations ? 
-    savedLocations.forEach(location => {
-        service.getDetails({
-            placeId: location.place_id
-        }, function (result, status) {
-            if (status != google.maps.places.PlacesServiceStatus.OK) {
-                alert(status);
-                return;
-            }
-            var marker = new google.maps.Marker({
-                map: map,
-                position: result.geometry.location
+        savedLocations.forEach(location => {
+            service.getDetails({
+                placeId: location.place_id
+            }, (result, status) => {
+                if (status != google.maps.places.PlacesServiceStatus.OK) {
+                    alert(status);
+                    return;
+                }
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: result.geometry.location
+                });
+                result.isSavedLocation = true;
+                var infoWindow = getInfoWindow(result);
+                marker.addListener('click', () => { 
+                    infoWindow.open(map, marker);
+                });
             });
-            var infoWindow = getInfoWindow(result);
-            marker.addListener('click', () => { infoWindow.open(map, marker) });
-        });
-    }) : null;
+        }) 
+        : null;
 
     searchBox.addListener('places_changed', () => {
         var places = searchBox.getPlaces();
@@ -85,7 +89,7 @@ function initMap() {
             // Add click listener for each marker, and attach the infoWindow object to it.
             marker.addListener('click', () => {
                 google.maps.event.addListener(infoWindow, 'domready', () => {
-                    document.body.querySelector(`#${place.place_id}`).addEventListener('click', saveLocation);
+                    autocomplete(document.getElementById(place.place_id), beers);
                 })
                 infoWindow.open(map, marker);
             })
@@ -120,12 +124,31 @@ function getContent(place) {
     }
     place.photos[0].getUrl() ? photoURL = place.photos[0].getUrl(photoSettings) : photoURL = "";
 
+    let buttonHTML;
+    
+    if (place.isSavedLocation) {
+        buttonHTML = `
+        <form method="POST" action="/locations/delete/${document.body.querySelector("#map").getAttribute('userid')}/${place.place_id}?_method=DELETE">
+            <input type="submit" value="Delete"/>
+        </form>
+        `
+    } else {
+        buttonHTML = ` 
+        <form autocomplete="off" method="POST" action="/locations/add/${place.place_id}">
+            <div class="autocomplete" style="width:100px">
+                <input id="${place.place_id}" type="text" name="beer" placeholder="Name of Beer">
+            </div>
+            <input type="submit"/>
+        </form>
+        `
+    }
+
     return `
-    <div style="width:200px; text-align:center;">
+    <div style="width:200px; text-align:center">
         <img src=${photoURL}></img>
         <h5>${place.name}</h5>
-        <p>${place.formatted_address}</p>
-        <button id=${place.place_id}>Save</button>
+        <a href='${place.url}'><p>${place.formatted_address}</p></a>
+        ${buttonHTML}
     </div>
     `
 }

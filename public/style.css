@@ -1,13 +1,86 @@
 #map {
-    position:absolute;
+    position: absolute;
     margin-top: 50px;
     height: calc(100% - 50px);
     /* The height is 400 pixels */
     width: 100%;
 }
 
-#search-input{
+a {
+    text-decoration: none !important;
+    color: inherit;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font: 16px Arial;
+}
+
+.autocomplete {
+    /*the container must be positioned relative:*/
+    text-align: center;
+    position: relative;
+    display: block;
+    margin: 0 auto;
+}
+
+input {
+    border: 1px solid transparent;
+    background-color: #f1f1f1;
+    padding: 2px;
+    font-size: 14px;
+}
+
+input[name=beer] {
+    background-color: #f1f1f1;
+    /* padding: 0px 50px 0px 50px; */
+    width: 100%;
+}
+
+input[type=submit] {
+    background-color: DodgerBlue;
+    color: #fff;
+    margin-top: 10px;
+}
+
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+}
+
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-items div:hover {
+    /*when hovering an item:*/
+    background-color: #e9e9e9;
+}
+
+.autocomplete-active {
+    /*when navigating through the items using the arrow keys:*/
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+}
+
+#search-input {
     margin-top: 1em;
     font-size: 1.5em;
     padding: 0.5em;
+    width: 20%;
+    background-color: #FFFFFF;
+    border: 1px solid gray;
 }

@@ -14,6 +14,7 @@ CREATE TABLE locations (
 CREATE TABLE beers (
     id SERIAL PRIMARY KEY,
     name TEXT,
+    price DECIMAL,
     user_id INTEGER,
     location_id INTEGER,
     CONSTRAINT fk_locations

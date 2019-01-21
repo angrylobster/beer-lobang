@@ -139,8 +139,9 @@ function getContent(place) {
         <form autocomplete="off" method="POST" action="/locations/add/${place.place_id}">
             <div class="autocomplete" style="width:100px">
                 <input id="${place.place_id}" type="text" name="beer" placeholder="Name of Beer">
+                <input type="text" name="price" placeholder="Price">
             </div>
-            <input type="submit"/>
+            <input type="submit" value="Save This Location"/>
         </form>
         `
     }

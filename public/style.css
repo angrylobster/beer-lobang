@@ -40,6 +40,13 @@ input[name=beer] {
     width: 100%;
 }
 
+input[name=price] {
+    background-color: #f1f1f1;
+    margin-top: 10px;
+    /* padding: 0px 50px 0px 50px; */
+    width: 100%;
+}
+
 input[type=submit] {
     background-color: DodgerBlue;
     color: #fff;

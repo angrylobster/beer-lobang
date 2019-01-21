@@ -7,28 +7,32 @@ module.exports = (db) => {
      */
 
     let add = (request, response) => {
-        db.locations.add(request, (err, result) => {
-            response.redirect('/users/map');
+        db.locations.add(request, (err, locationResult) => {
+            request.body.location_id = locationResult[0].id
+            db.beers.add(request, (err, beerResult) => {
+                response.redirect('/users/map');
+            })
         })
     }
 
     let renderMap = (request, response) => {
-        db.locations.getLocationsByUser(request, (err, result) => {
-            console.log(result)
-            if (result === null){
-                response.render('../views/map');
-            } else {
-                response.render('../views/map', {
-                    cookies: request.cookies, 
-                    savedLocations: result
-                });
-            }
+        db.locations.getLocationsByUser(request, (err, locationResults) => {
+            db.beers.getAllBeerNames(request, (err, beerResults) => {
+                if (locationResults === null){
+                    response.render('../views/map');
+                } else {
+                    response.render('../views/map', {
+                        cookies: request.cookies, 
+                        savedLocations: locationResults,
+                        beers: beerResults
+                    });
+                }
+            })
         })
     }
 
     let renderHomepage = (request, response) => {
         db.locations.getLocationsByUser(request, (err, result) => {
-            
             response.render('../views/home', {cookies: request.cookies})
         })
     }
@@ -40,7 +44,6 @@ module.exports = (db) => {
     }
 
     let deleteLocation = (request, response) => {
-        console.log(request.params)
         db.locations.deleteLocation(request, (err, result) => {
             response.redirect('back');
         })

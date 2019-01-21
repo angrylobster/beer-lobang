@@ -14,8 +14,10 @@ CREATE TABLE locations (
 CREATE TABLE beers (
     id SERIAL PRIMARY KEY,
     name TEXT,
-    abv DECIMAL,
-    type TEXT,
     user_id INTEGER,
-    location_id INTEGER
-)
+    location_id INTEGER,
+    CONSTRAINT fk_locations
+        FOREIGN KEY (location_id)
+        REFERENCES locations(id)
+        ON DELETE CASCADE
+);

@@ -22,7 +22,7 @@ module.exports = (dbPoolInstance) => {
     }
 
     let deleteLocation = (request, callback) => {
-        const query = 'DELETE FROM locations WHERE (place_id=$1 AND user_id=$2)'
+        const query = 'DELETE FROM locations WHERE (place_id=$1 AND user_id=$2)';
         const values = [request.params.locationid, request.params.userid];
         dbPoolInstance.query(query, values, (err, result) => {
             callback(null, result.rows);
@@ -31,7 +31,7 @@ module.exports = (dbPoolInstance) => {
 
     let getLocationsByUser = (request, callback) => {
         if (request.cookies['loggedIn']) {
-            const query = `SELECT * FROM locations WHERE (user_id=${request.cookies['user_id']})`;
+            const query = `SELECT * FROM locations INNER JOIN beers ON (locations.user_id=beers.user_id AND locations.id=beers.location_id) WHERE locations.user_id=${request.cookies['user_id']}`;
             dbPoolInstance.query(query, (err, result) => {
                 if (err) {
                     console.error('query error:' + err.stack);

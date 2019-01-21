@@ -8,7 +8,6 @@ module.exports = (db) => {
 
     let add = (request, response) => {
         db.locations.add(request, (err, locationResult) => {
-            console.log(request.body);
             request.body.location_id = locationResult[0].id
             db.beers.add(request, (err, beerResult) => {
                 response.redirect('/users/map');

@@ -129,8 +129,10 @@ function getContent(place) {
     let buttonHTML;
 
     if (place.isSavedLocation) {
+        let beerLocationObj = savedLocations.find(location => { return place.place_id === location.place_id });
         buttonHTML = `
         <form method="POST" action="/locations/delete/${document.body.querySelector("#map").getAttribute('userid')}/${place.place_id}?_method=DELETE">
+            <p>You had <strong>${beerLocationObj.name}</strong> here. It cost <strong>$${beerLocationObj.price}</strong>.</p>
             <input type="submit" value="Delete"/>
         </form>
         `

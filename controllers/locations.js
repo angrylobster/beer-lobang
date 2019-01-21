@@ -18,11 +18,11 @@ module.exports = (db) => {
     let renderMap = (request, response) => {
         db.locations.getLocationsByUser(request, (err, locationResults) => {
             db.beers.getAllBeerNames(request, (err, beerResults) => {
-                if (locationResults === null){
+                if (locationResults === null) {
                     response.render('../views/map');
                 } else {
                     response.render('../views/map', {
-                        cookies: request.cookies, 
+                        cookies: request.cookies,
                         savedLocations: locationResults,
                         beers: beerResults
                     });
@@ -32,8 +32,26 @@ module.exports = (db) => {
     }
 
     let renderHomepage = (request, response) => {
-        db.locations.getLocationsByUser(request, (err, result) => {
-            response.render('../views/home', {cookies: request.cookies})
+        db.locations.getAllLocationsAndBeers(request, (err, result) => {
+            if (request.cookies['loggedIn'] === 'true') {
+                let userResults = [];
+                result.forEach(location => {
+                    if (parseInt(request.cookies['user_id']) === parseInt(location.user_id)) {
+                        userResults.push(location);
+                    }
+                })
+                response.render('../views/home', {
+                    username: request.cookies['username'],
+                    cookies: request.cookies,
+                    results: result,
+                    userResults: userResults
+                });
+            } else {
+                response.render('../views/home', {
+                    cookies: request.cookies,
+                    results: result,
+                })
+            }
         })
     }
 

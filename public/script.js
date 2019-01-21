@@ -13,6 +13,33 @@ var SINGAPORE = {
 var markers = [];
 var map, service, searchBox;
 
+function cardHandler(){
+    var cards = document.body.querySelectorAll(".card-wrapper");
+    service = new google.maps.places.PlacesService(document.createElement('div'));
+    cards.forEach(card => {
+        service.getDetails({
+            placeId: card.id
+        }, (result, status) => {
+            if (status != google.maps.places.PlacesServiceStatus.OK) {
+                alert(status);
+                return;
+            }
+            let cardNodes = card.childNodes[0].childNodes[0].childNodes
+            if (result.photos){
+                cardNodes[0].src = result.photos[0].getUrl({
+                    'maxWidth': 800,
+                    'maxHeight': 600
+                });
+            } else {
+                cardNodes[0].alt = result.name + ' (no photo available)';
+            }
+            cardNodes[1].childNodes[0].textContent = result.name;
+            cardNodes[1].childNodes[1].innerHTML = result.adr_address;
+            cardNodes[0].parentNode.parentNode.href = result.url
+        });
+    })
+}
+
 function initMap() {
     // Center the map at Singapore
     map = new google.maps.Map(document.getElementById('map'), SINGAPORE);

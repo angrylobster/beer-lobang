@@ -11,12 +11,19 @@ a {
     color: inherit;
 }
 
+section{
+    width: 80%;
+    margin: 0 auto;
+    padding-top: 80px;
+}
+
 * {
     box-sizing: border-box;
 }
 
 body {
     font: 16px Arial;
+    margin: 0 auto;
 }
 
 .autocomplete {

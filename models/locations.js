@@ -48,8 +48,8 @@ module.exports = (dbPoolInstance) => {
         }
     }
 
-    let getAllLocations = (request, callback) => {
-        const query = `SELECT DISTINCT * FROM locations`;
+    let getAllLocationsAndBeers = (request, callback) => {
+        const query = `SELECT locations.place_id, beers.name, beers.price, beers.user_id, users.username FROM ((locations INNER JOIN beers ON locations.id=beers.location_id) INNER JOIN users ON beers.user_id=users.id)`;
         dbPoolInstance.query(query, (err, result) => {
             if (err) {
                 console.error('query error: ' + err.stack);
@@ -67,7 +67,7 @@ module.exports = (dbPoolInstance) => {
         add,
         getUsersLocations,
         getLocationsByUser,
-        getAllLocations,
+        getAllLocationsAndBeers,
         deleteLocation
     };
 };

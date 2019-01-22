@@ -118,7 +118,13 @@ function loadSavedLocations() {
                     alert(status);
                     return;
                 }
-                var marker = createMarker(result);
+                var marker = createMarker(result, {
+                    url: 'https://cdn1.iconfinder.com/data/icons/food-drink-flat/128/beer-128.png',
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(30, 30)
+                });
                 result.isSavedLocation = true;
                 var infoWindow = createInfoWindow(result);
                 marker.addListener('click', () => {
